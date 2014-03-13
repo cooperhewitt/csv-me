@@ -2,12 +2,12 @@ import os
 from flask import Flask
 from flask import render_template
 from flask import request, redirect
-from work import search_objects
+from utils import search_objects
 
-from redis import Redis
 from rq import Queue
+from worker import conn
 
-q = Queue(connection=Redis())
+q = Queue(connection=conn)
 
 import cooperhewitt.api.client
 
