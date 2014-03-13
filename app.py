@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask import render_template
 from flask import request, redirect
-from utils import search_objects
+from utils import process_objects
 
 from rq import Queue
 from worker import conn
@@ -33,6 +33,20 @@ def index():
 def about():
     return render_template('about.html', title="About")
     
+@app.route('/email/', methods=['GET', 'POST'])
+def get_email():
+    if request.method == 'POST':
+        data = request.form['meta']
+        method = request.form['method']
+        
+        return render_template('get_email.html', title="Wait, we need your email!", method=method, data=data)
+    else:
+        return redirect('/')
+
+@app.route('/thanks/')
+def thanks():    
+    return render_template('thanks.html', title="Thanks!")
+
 
 @app.route('/random/', methods=['GET', 'POST'])
 def random():
@@ -43,14 +57,19 @@ def random():
     else:
         return redirect('/')
         
-@app.route('/search/', methods=['GET', 'POST'])
+@app.route('/process/', methods=['GET', 'POST'])
 def search():
-    if request.method == 'POST' and request.form['searchinput']:
-        searchinput = request.form['searchinput']
+    if request.method == 'POST' and request.form['data']:
+        meta = request.form['data']
+        email = request.form['email']
         
+        data = {}
+        data['meta'] = meta
+        data['email'] = email
+       
         result = q.enqueue(
-            search_objects, searchinput)
+            process_objects, data)
         
-        return redirect('/') 
+        return redirect('/thanks/') ## should take us to a thanks page
     else:
         return redirect('/')  

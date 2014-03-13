@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container">
+
+	<form class="form-horizontal" action="/process/" method="post">
+	<fieldset>
+
+	<!-- Form Name -->
+	<legend>We just need your email</legend>
+	
+    <input type="hidden" name="method" value="{{ method }}">
+    <input type="hidden" name="data" value="{{ data }}">
+	
+	
+
+	<!-- Text input-->
+	<div class="control-group">
+	  <label class="control-label" for="email">Email:</label>
+	  <div class="controls">
+	    <input id="email" name="email" type="text" placeholder="" class="input-xlarge" required="">
+    
+	  </div>
+	</div>
+
+	<!-- Button -->
+	<div class="control-group">
+	  <label class="control-label" for=""></label>
+	  <div class="controls">
+	    <button id="" name="" class="btn btn-primary">Submit</button>
+	  </div>
+	</div>
+
+	</fieldset>
+	</form>
+
+
+</div>
+
+{% endblock %}

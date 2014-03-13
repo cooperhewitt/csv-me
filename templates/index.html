@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
 	
-	<form class="form-horizontal" action="/random/" method="post">
+	<form class="form-horizontal" action="/email/" method="post">
 	<fieldset>
 
 	<!-- Form Name -->
@@ -13,7 +13,7 @@
 	<div class="control-group">
 	  <label class="control-label" for="numobjects">Number of objects</label>
 	  <div class="controls">
-	    <select id="numobjects" name="numobjects" class="input-mini">
+	    <select id="meta" name="meta" class="input-mini">
 	      <option>1</option>
 	      <option>2</option>
 	      <option>3</option>
@@ -50,7 +50,7 @@
 	</form>
 	
 	
-	<form class="form-horizontal" action="/search/" method="post">
+	<form class="form-horizontal" action="/email/" method="post">
 	<fieldset>
 
 	<!-- Form Name -->
@@ -58,9 +58,10 @@
 
 	<!-- Search input-->
 	<div class="control-group">
+	  <input type="hidden" name="method" value="search">
 	  <label class="control-label" for="searchinput">Search the collection</label>
 	  <div class="controls">
-	    <input id="searchinput" name="searchinput" type="text" placeholder="chairs" class="input-xlarge search-query" required="">
+	    <input id="meta" name="meta" type="text" placeholder="chairs" class="input-xlarge search-query" required="">
     
 	  </div>
 	</div>
@@ -76,7 +77,7 @@
 	</fieldset>
 	</form>
 
-	<form class="form-horizontal" action="/exhibitions/" method="post">
+	<form class="form-horizontal" action="/email/" method="post">
 	<fieldset>
 
 	<!-- Form Name -->
@@ -86,7 +87,7 @@
 	<div class="control-group">
 	  <label class="control-label" for="exhibitions">Select an Exhibition</label>
 	  <div class="controls">
-	    <select id="exhibitions" name="exhibitions" class="input-xlarge">
+	    <select id="meta" name="meta" class="input-xlarge">
 	      {% for item in exhibitions %}
 		  <option value={{ item.id }}>{{ item.title }}</option>
 		  {% endfor %}
@@ -106,7 +107,7 @@
 	</form>
 	
 	
-	<form class="form-horizontal" action="/upload/" method="POST">
+	<form class="form-horizontal" action="/email/" method="POST">
 	<fieldset>
 
 	<!-- Form Name -->
@@ -116,7 +117,7 @@
 	<div class="control-group">
 	  <label class="control-label" for="accession">Paste in accession numbers</label>
 	  <div class="controls">                     
-	    <textarea id="list" name="list" rows="10" class="field span4"></textarea>
+	    <textarea id="meta" name="meta" rows="10" class="field span4"></textarea>
 	  </div>
 	</div>
 
