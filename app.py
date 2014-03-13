@@ -1,7 +1,13 @@
 import os
 from flask import Flask
 from flask import render_template
-from flask import request
+from flask import request, redirect
+from work import search_objects
+
+from redis import Redis
+from rq import Queue
+
+q = Queue(connection=Redis())
 
 import cooperhewitt.api.client
 
@@ -14,7 +20,7 @@ hostname = os.environ['CH_API_HOST']
 app = Flask(__name__)
 
 @app.route('/')
-def hello():
+def index():
     api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
     method = 'cooperhewitt.exhibitions.getList'
       
@@ -22,3 +28,29 @@ def hello():
     exhibitions = rsp['exhibitions']
     
     return render_template('index.html', exhibitions=exhibitions)
+    
+@app.route('/about/')
+def about():
+    return render_template('about.html', title="About")
+    
+
+@app.route('/random/', methods=['GET', 'POST'])
+def random():
+    if request.method == 'POST' and request.form['numobjects']:
+        numobjects = request.form['numobjects']
+    
+        return numobjects
+    else:
+        return redirect('/')
+        
+@app.route('/search/', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST' and request.form['searchinput']:
+        searchinput = request.form['searchinput']
+        
+        result = q.enqueue(
+            search_objects, searchinput)
+        
+        return redirect('/') 
+    else:
+        return redirect('/')  
