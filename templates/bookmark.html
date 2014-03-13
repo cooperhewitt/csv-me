@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+<h3>Thanks for bookmarking...  {{accession}}</h3>
+<p>Its object id is {{object_id}}</p>
+
+<pre>{% for items in results %}
+OK: {{ items.ok }}<br />
+event_id: {{ items.event_id }}<br />
+archive_ok: {{ items.archive_ok }}<br />
+queue_ok: {{ items.queue_ok }}
+{% endfor %}
+</pre>
+<a class="btn btn-large btn-block" href="/">Try another search</a>
+</div> <!-- /container -->
+{% endblock %}
