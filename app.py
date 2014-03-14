@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask import render_template
 from flask import request, redirect
-from utils import process_objects
+from utils import *
 
 from rq import Queue
 from worker import conn
@@ -68,7 +68,7 @@ def search():
         data['email'] = email
        
         result = q.enqueue(
-            process_objects, data)
+            search_objects, data)
         
         return redirect('/thanks/') ## should take us to a thanks page
     else:
