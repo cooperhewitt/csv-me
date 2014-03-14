@@ -50,14 +50,23 @@ def thanks():
 
 @app.route('/random/', methods=['GET', 'POST'])
 def random():
-    if request.method == 'POST' and request.form['numobjects']:
-        numobjects = request.form['numobjects']
-    
-        return numobjects
-    else:
-        return redirect('/')
+    if request.method == 'POST' and request.form['data']:
+        meta = request.form['data']
+        email = request.form['email']
         
-@app.route('/process/', methods=['GET', 'POST'])
+        data = {}
+        data['meta'] = meta
+        data['email'] = email
+        
+    
+        result = q.enqueue(
+            random_objects, data)
+        
+        return redirect('/thanks/') ## should take us to a thanks page
+    else:
+        return redirect('/')  
+        
+@app.route('/search/', methods=['GET', 'POST'])
 def search():
     if request.method == 'POST' and request.form['data']:
         meta = request.form['data']
@@ -69,6 +78,23 @@ def search():
        
         result = q.enqueue(
             search_objects, data)
+        
+        return redirect('/thanks/') ## should take us to a thanks page
+    else:
+        return redirect('/')  
+
+@app.route('/list/', methods=['GET', 'POST'])
+def list():
+    if request.method == 'POST' and request.form['data']:
+        meta = request.form['data']
+        email = request.form['email']
+        
+        data = {}
+        data['meta'] = meta
+        data['email'] = email
+       
+        result = q.enqueue(
+            list_objects, data)
         
         return redirect('/thanks/') ## should take us to a thanks page
     else:

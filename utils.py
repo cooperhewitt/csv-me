@@ -60,6 +60,14 @@ def search_objects(data):
     
     return success    
     
+def random_objects(data):
+    
+    return "not quite done?"
+    
+def list_objects(data):
+    
+    return "not quite done?"
+
 def upload_s3(filename, data):
     # upload the csv data to S3    
     conn = boto.connect_s3(s3_key, s3_secret)
