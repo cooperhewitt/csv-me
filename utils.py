@@ -33,6 +33,8 @@ def search_objects(data):
     output = StringIO.StringIO()
     writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
     
+    writer.writerow(['id', 'accession_number', 'creditline', 'date', 'decade', 'department_id', 'description', 'dimensions', 'inscribed', 'justification', 'markings', 'media_id', 'medium', 'period_id', 'provenance', 'signed', 'title', 'tms:id', 'type', 'type_id', 'url', 'woe:country', 'year_acquired', 'year_end', 'year_start', 'image url'])
+    
     for x in range(0, pages):
         args = { 'query': query, 'page': x }
         rsp = api.call(method, **args)
@@ -62,11 +64,78 @@ def search_objects(data):
     
 def random_objects(data):
     
-    return "not quite done?"
+    numobjects = data['meta']
+    api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
+    method = 'cooperhewitt.objects.getRandom'
     
+    output = StringIO.StringIO()
+    writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+    
+    writer.writerow(['id', 'accession_number', 'creditline', 'date', 'decade', 'department_id', 'description', 'dimensions', 'inscribed', 'justification', 'markings', 'media_id', 'medium', 'period_id', 'provenance', 'signed', 'title', 'tms:id', 'type', 'type_id', 'url', 'woe:country', 'year_acquired', 'year_end', 'year_start', 'image url'])
+    
+    for x in range(0, int(numobjects)):
+        rsp = api.call(method)
+        obj = rsp['object']
+        img_url = ''
+        # for image in obj['images']:
+        #     if image['b']['is_primary'] == '1':
+        #         img_url = image['b']['url']
+        
+        obj = utf8ify_dict(obj)
+        writer.writerow([obj['id'], obj['accession_number'], obj['creditline'], obj['date'], obj['decade'], obj['department_id'], obj['description'], obj['dimensions'], obj['inscribed'], obj['justification'], obj['markings'], obj['media_id'], obj['medium'], obj['period_id'], obj['provenance'], obj['signed'], obj['title'], obj['tms:id'], obj['type'], obj['type_id'], obj['url'], obj['woe:country'], obj['year_acquired'], obj['year_end'], obj['year_start'], img_url])
+
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
+    
+    filename = st + '_' + 'random_' + numobjects + '.csv'
+    upload_s3(filename, output)
+    
+    to_email = data['email'].encode('utf8')
+    send_email(to_email, filename)
+    
+    success = "You just uploaded " + filename + " to S3 and emailed " + to_email + " about it."
+    
+    return success    
+            
 def list_objects(data):
+    obj_list = data['meta']
+    obj_list = obj_list.splitlines()
     
-    return "not quite done?"
+    api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
+    method = 'cooperhewitt.objects.getInfo'
+    
+    output = StringIO.StringIO()
+    writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+    
+    writer.writerow(['id', 'accession_number', 'creditline', 'date', 'decade', 'department_id', 'description', 'dimensions', 'inscribed', 'justification', 'markings', 'media_id', 'medium', 'period_id', 'provenance', 'signed', 'title', 'tms:id', 'type', 'type_id', 'url', 'woe:country', 'year_acquired', 'year_end', 'year_start', 'image url'])
+    
+    for line in obj_list:
+        args = { 'accession_number': line }
+        rsp = api.call(method, **args)
+        if rsp['stat'] == 'ok':
+            obj = rsp['object']
+            img_url = ''
+            for image in obj['images']:
+                if image['b']['is_primary'] == '1':
+                    img_url = image['b']['url']
+        
+            obj = utf8ify_dict(obj)            
+            writer.writerow([obj['id'], obj['accession_number'], obj['creditline'], obj['date'], obj['decade'], obj['department_id'], obj['description'], obj['dimensions'], obj['inscribed'], obj['justification'], obj['markings'], obj['media_id'], obj['medium'], obj['period_id'], obj['provenance'], obj['signed'], obj['title'], obj['tms:id'], obj['type'], obj['type_id'], obj['url'], obj['woe:country'], obj['year_acquired'], obj['year_end'], obj['year_start'], img_url])
+        else:
+            writer.writerow(["Couldn't find a record for " + line])           
+    
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
+    
+    filename = st + '_' + 'custom' + '.csv'
+    upload_s3(filename, output)
+    
+    to_email = data['email'].encode('utf8')
+    send_email(to_email, filename)
+    
+    success = "You just uploaded " + filename + " to S3 and emailed " + to_email + " about it."
+    
+    return success
 
 def upload_s3(filename, data):
     # upload the csv data to S3    
