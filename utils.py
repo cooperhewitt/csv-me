@@ -23,7 +23,7 @@ def search_objects(data):
     query = data['meta']
     
     api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
-    method = 'cooperhewitt.search.objects'
+    method = 'millerfox.search.objects'
     args = { 'query': query }
 
     rsp = api.call(method, **args)
@@ -102,7 +102,7 @@ def list_objects(data):
     obj_list = obj_list.splitlines()
     
     api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
-    method = 'cooperhewitt.objects.getInfo'
+    method = 'millerfox.objects.getInfo'
     
     output = StringIO.StringIO()
     writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
