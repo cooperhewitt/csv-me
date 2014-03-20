@@ -3,6 +3,7 @@ Jinja2==2.7.2
 MarkupSafe==0.19
 Werkzeug==0.9.4
 boto==2.27.0
+dropbox==2.0.0
 gunicorn==18.0
 itsdangerous==0.23
 python-dateutil==2.2
@@ -13,4 +14,5 @@ sendgrid==0.3.1
 six==1.5.2
 smtpapi==0.1.1
 times==0.6.2
+urllib3==1.8
 wsgiref==0.1.2

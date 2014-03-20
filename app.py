@@ -76,8 +76,7 @@ def search():
         data['meta'] = meta
         data['email'] = email
        
-        result = q.enqueue(
-            search_objects, data)
+        result = q.enqueue(search_objects, args=(data,), timeout=3600)
         
         return redirect('/thanks/') ## should take us to a thanks page
     else:

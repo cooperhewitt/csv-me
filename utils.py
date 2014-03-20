@@ -7,6 +7,10 @@ from boto.s3.key import Key
 import time
 import datetime
 import sendgrid
+import dropbox
+
+import urllib2 as urllib			
+
 
 access_token = os.environ['CH_API_KEY']
 hostname = os.environ['CH_API_HOST']
@@ -18,12 +22,14 @@ s3_bucket = os.environ['S3_BUCKET']
 sendgrid_password = os.environ['SENDGRID_PASSWORD']
 sendgrid_username = os.environ['SENDGRID_USERNAME']
 
+dropbox_access_token = os.environ['DROPBOX_ACCESS_TOKEN']
+
 def search_objects(data):
 
     query = data['meta']
     
     api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
-    method = 'millerfox.search.objects'
+    method = 'cooperhewitt.search.objects'
     args = { 'query': query }
 
     rsp = api.call(method, **args)
@@ -34,7 +40,12 @@ def search_objects(data):
     writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
     
     writer.writerow(['id', 'accession_number', 'creditline', 'date', 'decade', 'department_id', 'description', 'dimensions', 'inscribed', 'justification', 'markings', 'media_id', 'medium', 'period_id', 'provenance', 'signed', 'title', 'tms:id', 'type', 'type_id', 'url', 'woe:country', 'year_acquired', 'year_end', 'year_start', 'image url'])
+
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
     
+    
+   
     for x in range(0, pages):
         args = { 'query': query, 'page': x }
         rsp = api.call(method, **args)
@@ -45,20 +56,24 @@ def search_objects(data):
             for image in obj['images']:
                 if image['b']['is_primary'] == '1':
                     img_url = image['b']['url']
+                    upload_dropbox(img_url, st)
             
             obj = utf8ify_dict(obj)
             writer.writerow([obj['id'], obj['accession_number'], obj['creditline'], obj['date'], obj['decade'], obj['department_id'], obj['description'], obj['dimensions'], obj['inscribed'], obj['justification'], obj['markings'], obj['media_id'], obj['medium'], obj['period_id'], obj['provenance'], obj['signed'], obj['title'], obj['tms:id'], obj['type'], obj['type_id'], obj['url'], obj['woe:country'], obj['year_acquired'], obj['year_end'], obj['year_start'], img_url])
     
-    ts = time.time()
-    st = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
     
-    filename = st + '_' + query + '.csv'
-    upload_s3(filename, output)
+
+    upload_csv_dropbox(output, st)
+            
+    dropbox_link = get_dropbox_share(st)
     
+    #filename = st + '_' + query + '.csv'
+    #upload_s3(filename, output)
+     
     to_email = data['email'].encode('utf8')
-    send_email(to_email, filename)
+    send_email(to_email, dropbox_link)
     
-    success = "You just uploaded " + filename + " to S3 and emailed " + to_email + " about it."
+    success = "You just uploaded " + st + " to dropbox and emailed " + to_email + " about it."
     
     return success    
     
@@ -102,7 +117,7 @@ def list_objects(data):
     obj_list = obj_list.splitlines()
     
     api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
-    method = 'millerfox.objects.getInfo'
+    method = 'cooperhewitt.objects.getInfo'
     
     output = StringIO.StringIO()
     writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
@@ -149,14 +164,46 @@ def upload_s3(filename, data):
     k.make_public()
     
 
+def upload_dropbox(url, jobname):
+    from cStringIO import StringIO
+    client = dropbox.client.DropboxClient(dropbox_access_token)
+    
+    img_file = urllib.urlopen(url)
+    im = StringIO(img_file.read())
+
+    file_name = url.split('/')[-1]
+
+    file_name = jobname + '/' + file_name
+    response = client.put_file(file_name, im)
+        
+    
+def upload_csv_dropbox(data, jobname):
+    from cStringIO import StringIO
+    client = dropbox.client.DropboxClient(dropbox_access_token)
+    
+    filename = jobname + "/data.csv"
+    response = client.put_file(filename, data)
+    
+    
+    
+def get_dropbox_share(jobname):
+    from cStringIO import StringIO
+    client = dropbox.client.DropboxClient(dropbox_access_token)
+        
+    rsp = client.share(jobname, short_url=True)
+
+    return rsp['url']    
+    
+    
+    
 def send_email(to, filename):
     # send an email? er... sumptin
     
     sg = sendgrid.SendGridClient(sendgrid_username, sendgrid_password)
     message = sendgrid.Mail()
     
-    body_html = 'Thanks for using csv-me. Here is a link to your file:<br><br> http://csvme.s3.amazonaws.com/' + filename
-    body_text = 'Thanks for using csv-me. Here is a link to your file:\n\n http://csvme.s3.amazonaws.com/' + filename
+    body_html = 'Thanks for using csv-me. Here is a link to your stuff:<br><br> '  + filename
+    body_text = 'Thanks for using csv-me. Here is a link to your stuff:\n\n ' + filename
         
     message.add_to(to)
     message.set_subject('Yo, your file is ready!')
