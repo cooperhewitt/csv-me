@@ -21,11 +21,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
-    method = 'cooperhewitt.exhibitions.getList'
+    # api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
+    # method = 'cooperhewitt.exhibitions.getList'
       
-    rsp = api.call(method) 
-    exhibitions = rsp['exhibitions']
+    # rsp = api.call(method) 
+    # exhibitions = rsp['exhibitions']
+    exhibitions = {}
     
     return render_template('index.html', exhibitions=exhibitions)
     

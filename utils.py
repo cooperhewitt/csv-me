@@ -56,20 +56,18 @@ def search_objects(data):
             for image in obj['images']:
                 if image['b']['is_primary'] == '1':
                     img_url = image['b']['url']
-                    upload_dropbox(img_url, st)
+                    
             
             obj = utf8ify_dict(obj)
             writer.writerow([obj['id'], obj['accession_number'], obj['creditline'], obj['date'], obj['decade'], obj['department_id'], obj['description'], obj['dimensions'], obj['inscribed'], obj['justification'], obj['markings'], obj['media_id'], obj['medium'], obj['period_id'], obj['provenance'], obj['signed'], obj['title'], obj['tms:id'], obj['type'], obj['type_id'], obj['url'], obj['woe:country'], obj['year_acquired'], obj['year_end'], obj['year_start'], img_url])
-    
+            if img_url != '':
+                upload_dropbox(img_url, st)
     
 
     upload_csv_dropbox(output, st)
             
     dropbox_link = get_dropbox_share(st)
-    
-    #filename = st + '_' + query + '.csv'
-    #upload_s3(filename, output)
-     
+         
     to_email = data['email'].encode('utf8')
     send_email(to_email, dropbox_link)
     
@@ -87,6 +85,9 @@ def random_objects(data):
     writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
     
     writer.writerow(['id', 'accession_number', 'creditline', 'date', 'decade', 'department_id', 'description', 'dimensions', 'inscribed', 'justification', 'markings', 'media_id', 'medium', 'period_id', 'provenance', 'signed', 'title', 'tms:id', 'type', 'type_id', 'url', 'woe:country', 'year_acquired', 'year_end', 'year_start', 'image url'])
+
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
     
     for x in range(0, int(numobjects)):
         rsp = api.call(method)
@@ -99,18 +100,15 @@ def random_objects(data):
         obj = utf8ify_dict(obj)
         writer.writerow([obj['id'], obj['accession_number'], obj['creditline'], obj['date'], obj['decade'], obj['department_id'], obj['description'], obj['dimensions'], obj['inscribed'], obj['justification'], obj['markings'], obj['media_id'], obj['medium'], obj['period_id'], obj['provenance'], obj['signed'], obj['title'], obj['tms:id'], obj['type'], obj['type_id'], obj['url'], obj['woe:country'], obj['year_acquired'], obj['year_end'], obj['year_start'], img_url])
 
-    ts = time.time()
-    st = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
     
-    filename = st + '_' + 'random_' + numobjects + '.csv'
-    upload_s3(filename, output)
-    
+    upload_csv_dropbox(output, st)
+            
+    dropbox_link = get_dropbox_share(st)
+         
     to_email = data['email'].encode('utf8')
-    send_email(to_email, filename)
+    send_email(to_email, dropbox_link)
     
-    success = "You just uploaded " + filename + " to S3 and emailed " + to_email + " about it."
-    
-    return success    
+    success = "You just uploaded " + st + " to dropbox and emailed " + to_email + " about it."
             
 def list_objects(data):
     obj_list = data['meta']
@@ -123,6 +121,9 @@ def list_objects(data):
     writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
     
     writer.writerow(['id', 'accession_number', 'creditline', 'date', 'decade', 'department_id', 'description', 'dimensions', 'inscribed', 'justification', 'markings', 'media_id', 'medium', 'period_id', 'provenance', 'signed', 'title', 'tms:id', 'type', 'type_id', 'url', 'woe:country', 'year_acquired', 'year_end', 'year_start', 'image url'])
+
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
     
     for line in obj_list:
         args = { 'accession_number': line }
@@ -136,21 +137,22 @@ def list_objects(data):
         
             obj = utf8ify_dict(obj)            
             writer.writerow([obj['id'], obj['accession_number'], obj['creditline'], obj['date'], obj['decade'], obj['department_id'], obj['description'], obj['dimensions'], obj['inscribed'], obj['justification'], obj['markings'], obj['media_id'], obj['medium'], obj['period_id'], obj['provenance'], obj['signed'], obj['title'], obj['tms:id'], obj['type'], obj['type_id'], obj['url'], obj['woe:country'], obj['year_acquired'], obj['year_end'], obj['year_start'], img_url])
+            if img_url != '':
+                upload_dropbox(img_url, st)
         else:
             writer.writerow(["Couldn't find a record for " + line])           
     
-    ts = time.time()
-    st = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
     
-    filename = st + '_' + 'custom' + '.csv'
-    upload_s3(filename, output)
-    
+    upload_csv_dropbox(output, st)
+            
+    dropbox_link = get_dropbox_share(st)
+         
     to_email = data['email'].encode('utf8')
-    send_email(to_email, filename)
+    send_email(to_email, dropbox_link)
     
-    success = "You just uploaded " + filename + " to S3 and emailed " + to_email + " about it."
+    success = "You just uploaded " + st + " to dropbox and emailed " + to_email + " about it."
     
-    return success
+    return success    
 
 def upload_s3(filename, data):
     # upload the csv data to S3    
@@ -174,14 +176,14 @@ def upload_dropbox(url, jobname):
     file_name = url.split('/')[-1]
 
     file_name = jobname + '/' + file_name
-    response = client.put_file(file_name, im)
+    response = client.put_file(file_name, im, overwrite=True)
         
     
 def upload_csv_dropbox(data, jobname):
     from cStringIO import StringIO
     client = dropbox.client.DropboxClient(dropbox_access_token)
     
-    filename = jobname + "/data.csv"
+    filename = jobname + "/" + jobname + "_" + "data.csv"
     response = client.put_file(filename, data)
     
     
