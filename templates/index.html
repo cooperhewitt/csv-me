@@ -3,80 +3,130 @@
 {% block content %}
 <div class="container">
 	
-	<form class="form-horizontal" action="/email/" method="post">
-	<input type="hidden" name="method" value="random">
-	<fieldset>
 
-	<!-- Form Name -->
-	<legend>Get some random objects</legend>
+    <ul class="nav nav-tabs" id="myTab">
+        
+        <li class="active"><a href="#search">Search</a></li>
+		<li><a href="#random">Random</a></li>
+		<li><a href="#upload">Upload</a></li>
+     </ul>
+	 
+    <div class="tab-content">
+        <div id="search" class="tab-pane fade in active">
+			<form class="form-horizontal" action="/email/" method="post">
+			<fieldset>
 
-	<!-- Select Basic -->
-	<div class="control-group">
-	  <label class="control-label" for="numobjects">Number of objects</label>
-	  <div class="controls">
-	    <select id="meta" name="meta" class="input-mini">
-	      <option>1</option>
-	      <option>2</option>
-	      <option>3</option>
-	      <option>4</option>
-	      <option>5</option>
-	      <option>6</option>
-	      <option>7</option>
-	      <option>8</option>
-	      <option>9</option>
-	      <option>10</option>
-	      <option>11</option>
-	      <option>12</option>
-	      <option>13</option>
-	      <option>14</option>
-	      <option>15</option>
-	      <option>16</option>
-	      <option>17</option>
-	      <option>18</option>
-	      <option>19</option>
-	      <option>20</option>
-	    </select>
-	  </div>
-	</div>
-	
-	<!-- Button -->
-	<div class="control-group">
-	  <div class="controls">
-	    <button class="btn btn-primary" type="submit">Submit</button>
-	  </div>
-	</div>
-	
+			<!-- Form Name -->
+			<legend>Search for it</legend>
 
-	</fieldset>
-	</form>
-	
-	
-	<form class="form-horizontal" action="/email/" method="post">
-	<fieldset>
-
-	<!-- Form Name -->
-	<legend>Search for it</legend>
-
-	<!-- Search input-->
-	<div class="control-group">
-	  <input type="hidden" name="method" value="search">
-	  <label class="control-label" for="searchinput">Search the collection</label>
-	  <div class="controls">
-	    <input id="meta" name="meta" type="text" placeholder="chairs" class="input-xlarge search-query" required="">
+			<!-- Search input-->
+			<div class="control-group">
+			  <input type="hidden" name="method" value="search">
+			  <label class="control-label" for="searchinput">Search the collection</label>
+			  <div class="controls">
+			    <input id="meta" name="meta" type="text" placeholder="chairs" class="input-xlarge search-query" required="">
     
-	  </div>
-	</div>
+			  </div>
+			</div>
 
-	<!-- Button -->
-	<div class="control-group">
-	  <label class="control-label" for="singlebutton"></label>
-	  <div class="controls">
-	    <button type="submit" class="btn btn-primary">Submit</button>
-	  </div>
-	</div>
+			<!-- Button -->
+			<div class="control-group">
+			  <label class="control-label" for="singlebutton"></label>
+			  <div class="controls">
+			    <button type="submit" class="btn btn-primary">Submit</button>
+			  </div>
+			</div>
 
-	</fieldset>
-	</form>
+			</fieldset>
+			</form>
+            
+        </div>
+		
+        <div id="random" class="tab-pane fade">
+			<form class="form-horizontal" action="/email/" method="post">
+			<input type="hidden" name="method" value="random">
+			<fieldset>
+
+			<!-- Form Name -->
+			<legend>Get some random objects</legend>
+
+			<!-- Select Basic -->
+			<div class="control-group">
+			  <label class="control-label" for="numobjects">Number of objects</label>
+			  <div class="controls">
+			    <select id="meta" name="meta" class="input-mini">
+			      <option>1</option>
+			      <option>2</option>
+			      <option>3</option>
+			      <option>4</option>
+			      <option>5</option>
+			      <option>6</option>
+			      <option>7</option>
+			      <option>8</option>
+			      <option>9</option>
+			      <option>10</option>
+			      <option>11</option>
+			      <option>12</option>
+			      <option>13</option>
+			      <option>14</option>
+			      <option>15</option>
+			      <option>16</option>
+			      <option>17</option>
+			      <option>18</option>
+			      <option>19</option>
+			      <option>20</option>
+			    </select>
+			  </div>
+			</div>
+	
+			<!-- Button -->
+			<div class="control-group">
+			  <div class="controls">
+			    <button class="btn btn-primary" type="submit">Submit</button>
+			  </div>
+			</div>
+	
+
+			</fieldset>
+			</form>
+            
+        </div>
+		
+		
+        <div id="upload" class="tab-pane fade">
+		   	<form class="form-horizontal" action="/email/" method="POST">
+		   	<input type="hidden" name="method" value="list">
+		
+		   	<fieldset>
+
+		   	<!-- Form Name -->
+		   	<legend>Upload a list</legend>
+
+		   	<!-- Textarea -->
+		   	<div class="control-group">
+		   	  <label class="control-label" for="accession">Paste in accession numbers</label>
+		   	  <div class="controls">                     
+		   	    <textarea id="meta" name="meta" rows="10" class="field span4"></textarea>
+		   	  </div>
+		   	</div>
+
+		   	<!-- Button -->
+		   	<div class="control-group">
+		   	  <label class="control-label" for="submit"></label>
+		   	  <div class="controls">
+		   	    <button type="submit" class="btn btn-primary">Submit</button>
+		   	  </div>
+		   	</div>
+
+		   	</fieldset>
+		   	</form>
+           
+        </div>		
+    </div>
+	
+	
+	
+	
 
 	<!-- dissable exhibitions
 	<form class="form-horizontal" action="/email/" method="post">
@@ -104,39 +154,13 @@
 	  <div class="controls">
 	    <button type="submit" class="btn btn-primary">Submit</button>
 	  </div>
-	</div> -->
+	</div> 
 
 	</fieldset>
 	</form>
+	-->
 	
 	
-	<form class="form-horizontal" action="/email/" method="POST">
-	<input type="hidden" name="method" value="list">
-		
-	<fieldset>
 
-	<!-- Form Name -->
-	<legend>Upload a list</legend>
-
-	<!-- Textarea -->
-	<div class="control-group">
-	  <label class="control-label" for="accession">Paste in accession numbers</label>
-	  <div class="controls">                     
-	    <textarea id="meta" name="meta" rows="10" class="field span4"></textarea>
-	  </div>
-	</div>
-
-	<!-- Button -->
-	<div class="control-group">
-	  <label class="control-label" for="submit"></label>
-	  <div class="controls">
-	    <button type="submit" class="btn btn-primary">Submit</button>
-	  </div>
-	</div>
-
-	</fieldset>
-	</form>
-	
-
-</div>
+</div>	 
 {% endblock %}

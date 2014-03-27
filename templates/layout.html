@@ -11,15 +11,24 @@
     <link href="{{ url_for('static', filename='css/bootstrap-responsive.css')}}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
 
-
+	
   </head>
 
   <body>
 
 	{% block content %}{% endblock %}
-
-    <script src="{{ url_for('static', filename='js/jquery-min.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.js')}}"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+	
+	<script type="text/javascript">
+	$(document).ready(function(){ 
+	    $("#myTab a").click(function(e){
+	    	e.preventDefault();
+	    	$(this).tab('show');
+	    });
+	});
+	</script>
+	
 
   </body>
 </html>
