@@ -25,9 +25,24 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ['SECRET']
 
-app.config['MONGODB_DB'] = os.environ['DB_NAME']
-app.config['MONGODB_HOST'] = os.environ['DB_HOST']
-app.config['MONGODB_PORT'] = os.environ['DB_PORT']  # 27017
+MONGO_URL = os.environ.get("MONGOHQ_URL")
+
+if MONGO_URL:
+    credentials = re.sub(r"(.*?)//(.*?)(@hatch)", r"\2",MONGO_URL)
+    username = credentials.split(":")[0]
+    password = credentials.split(":")[1]
+    app.config["MONGODB_DB"] = MONGO_URL.split("/")[-1]
+    connect(
+        MONGO_URL.split("/")[-1],
+        host=MONGO_URL,
+        port=1043,
+        username=username,
+        password=password
+    )
+else:
+    app.config['MONGODB_DB'] = os.environ['DB_NAME']
+    app.config['MONGODB_HOST'] = os.environ['DB_HOST']
+    app.config['MONGODB_PORT'] = os.environ['DB_PORT']  # 27017
 
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
