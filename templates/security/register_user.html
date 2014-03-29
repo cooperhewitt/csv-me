@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+<form action="/register" method="POST" name="register_user_form" class="form-horizontal">
+	{{ register_user_form.csrf_token }}
+<fieldset>
+
+<!-- Form Name -->
+<legend>Register</legend>
+
+<!-- Text input-->
+<div class="control-group">
+  <label class="control-label" for="email">Email</label>
+  <div class="controls">
+    <input id="email" name="email" type="text" placeholder="" class="input-xlarge" required="">
+    
+  </div>
+</div>
+
+<!-- Password input-->
+<div class="control-group">
+  <label class="control-label" for="password">Password</label>
+  <div class="controls">
+    <input id="password" name="password" type="password" placeholder="" class="input-xlarge" required="">
+    
+  </div>
+</div>
+
+<!-- Password input-->
+<div class="control-group">
+  <label class="control-label" for="password_confirm">Retype Password</label>
+  <div class="controls">
+    <input id="password_confirm" name="password_confirm" type="password" placeholder="" class="input-xlarge" required="">
+    
+  </div>
+</div>
+
+<!-- Button -->
+<div class="control-group">
+  <label class="control-label" for="register"></label>
+  <div class="controls">
+    <button id="submit" name="submit" class="btn btn-primary">Register</button>
+  </div>
+</div>
+
+</fieldset>
+</form>
+	
+	
+</div>
+{% endblock %}
