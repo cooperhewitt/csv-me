@@ -129,7 +129,9 @@ def search():
         data = {}
         data['meta'] = meta
         data['email'] = email
-       
+        
+        job = Log(method='search_objects', data=data).save()
+        
         result = q.enqueue(search_objects, args=(data,), timeout=3600)
         
         return redirect('/thanks/') ## should take us to a thanks page
@@ -146,6 +148,8 @@ def list():
         data['meta'] = meta
         data['email'] = email
        
+        job = Log(method='list_objects', data=data).save()
+        
         result = q.enqueue(
             list_objects, data)
         
