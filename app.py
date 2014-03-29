@@ -4,6 +4,7 @@ from flask import render_template
 from flask import request, redirect
 from utils import *
 from pprint import pprint
+import re
 
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import Security, MongoEngineUserDatastore, UserMixin, RoleMixin, login_required, current_user
