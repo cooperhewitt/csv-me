@@ -75,13 +75,18 @@ security = Security(app, user_datastore)
 
 @app.route('/')
 def index():
+    #if current_user.get_id():
+    #    user = user_datastore.find_user(id=current_user.get_id())
+    #if current_user:
+    #    user = current_user
+    #else:
+    #    user = ''
     # api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
     # method = 'cooperhewitt.exhibitions.getList'
       
     # rsp = api.call(method) 
     # exhibitions = rsp['exhibitions']
     exhibitions = {}
-    
     return render_template('index.html', exhibitions=exhibitions)
     
 @app.route('/about/')
@@ -163,6 +168,9 @@ def list():
 @app.route('/test/', methods=['GET', 'POST'])
 @login_required
 def test():
+    #result = user_datastore.create_role(name='admin', description='main man')
+    #result = user_datastore.add_role_to_user(current_user, 'admin')
+    
     api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
     method = 'millerfox.objects.getInfo'
     args = { 'accession_number': '7.2013.5' }  

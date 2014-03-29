@@ -40,8 +40,20 @@ else:
 class Log(Document):
     method = StringField(max_length=300)
     completed_at = DateTimeField(default=datetime.datetime.now, required=True)
+    submitted_at = DateTimeField(default=datetime.datetime.now, required=True)
     data = DynamicField()
 
+class Role(Document):
+    name = StringField(max_length=80, unique=True)
+    description = StringField(max_length=255)
+
+class User(Document):
+    email = StringField(max_length=255)
+    password = StringField(max_length=255)
+    active = BooleanField(default=True)
+    confirmed_at = DateTimeField()
+    roles = ListField(ReferenceField(Role), default=[])
+    
 
 access_token = os.environ['CH_API_KEY']
 hostname = os.environ['CH_API_HOST']
@@ -281,4 +293,9 @@ def utf8ify_dict(stuff):
 
     return stuff	  
 
+if __name__ == '__main__':
+    
+    # create a role
+    added_role = Role(name='admin', description='administrators').save()
+    print "success"
     

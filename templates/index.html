@@ -3,7 +3,8 @@
 {% block content %}
 <div class="container">
 	
-
+	<h2>get some stuff</h2>
+	
     <ul class="nav nav-tabs" id="myTab">
         
         <li class="active"><a href="#search">Search</a></li>
@@ -28,6 +29,18 @@
     
 			  </div>
 			</div>
+			{% if current_user.has_role('admin') %}
+			<!-- Multiple Checkboxes (inline) -->
+			<div class="control-group">
+			  <div class="controls">
+			    <label class="checkbox inline" for="private">
+			      <input type="checkbox" name="private" id="private">
+			      Include private objects
+			    </label>
+			  </div>
+			</div>
+			{% endif %}
+			
 
 			<!-- Button -->
 			<div class="control-group">
