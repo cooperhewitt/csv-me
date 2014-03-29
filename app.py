@@ -7,6 +7,7 @@ from pprint import pprint
 import re
 
 from flask.ext.mongoengine import MongoEngine
+from mongoengine import connect
 from flask.ext.security import Security, MongoEngineUserDatastore, UserMixin, RoleMixin, login_required, current_user
 
 from rq import Queue
