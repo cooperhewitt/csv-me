@@ -291,11 +291,4 @@ def utf8ify_dict(stuff):
 
         stuff[k] = v
 
-    return stuff	  
-
-if __name__ == '__main__':
-    
-    # create a role
-    added_role = Role(name='admin', description='administrators').save()
-    print "success"
-    
+    return stuff	      
