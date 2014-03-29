@@ -3,6 +3,10 @@ from flask import Flask
 from flask import render_template
 from flask import request, redirect
 from utils import *
+from pprint import pprint
+
+from flask.ext.mongoengine import MongoEngine
+from flask.ext.security import Security, MongoEngineUserDatastore, UserMixin, RoleMixin, login_required, current_user
 
 from rq import Queue
 from worker import conn
@@ -18,6 +22,37 @@ access_token = os.environ['CH_API_KEY']
 hostname = os.environ['CH_API_HOST']
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = os.environ['SECRET']
+
+app.config['MONGODB_DB'] = os.environ['DB_NAME']
+app.config['MONGODB_HOST'] = os.environ['DB_HOST']
+app.config['MONGODB_PORT'] = os.environ['DB_PORT']  # 27017
+
+app.config['SECURITY_REGISTERABLE'] = True
+app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
+
+db = MongoEngine(app)
+
+class Role(db.Document, RoleMixin):
+    name = db.StringField(max_length=80, unique=True)
+    description = db.StringField(max_length=255)
+
+class User(db.Document, UserMixin):
+    email = db.StringField(max_length=255)
+    password = db.StringField(max_length=255)
+    active = db.BooleanField(default=True)
+    confirmed_at = db.DateTimeField()
+    roles = db.ListField(db.ReferenceField(Role), default=[])
+    
+class Log(db.Document):
+    method = db.StringField(max_length=300)
+    submitted_at = db.DateTimeField(default=datetime.datetime.now, required=True)
+    data = db.DynamicField()
+
+# Setup Flask-Security
+user_datastore = MongoEngineUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
 
 @app.route('/')
 def index():
@@ -59,7 +94,8 @@ def random():
         data['meta'] = meta
         data['email'] = email
         
-    
+        job = Log(method='random_objects', data=data).save()
+        
         result = q.enqueue(
             random_objects, data)
         
@@ -99,3 +135,15 @@ def list():
         return redirect('/thanks/') ## should take us to a thanks page
     else:
         return redirect('/')  
+
+
+@app.route('/test/', methods=['GET', 'POST'])
+def test():
+    api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
+    method = 'millerfox.objectPackages.getList'
+      
+    #rsp = api.call(method)
+    return render_template('test.html', rsp='')
+    
+    
+    
