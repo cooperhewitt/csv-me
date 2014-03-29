@@ -96,7 +96,7 @@ def about():
 @app.route('/email/', methods=['GET', 'POST'])
 def get_email():
     if request.method == 'POST':
-        data = request.form['meta']
+        data = request.form['data']
         method = request.form['method']
         
         return render_template('get_email.html', title="Wait, we need your email!", method=method, data=data)

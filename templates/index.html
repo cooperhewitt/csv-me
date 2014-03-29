@@ -14,7 +14,8 @@
 	 
     <div class="tab-content">
         <div id="search" class="tab-pane fade in active">
-			<form class="form-horizontal" action="/email/" method="post">
+			<form class="form-horizontal" action="/{% if current_user.email %}search{% else %}email{% endif %}/" method="post">
+			{% if current_user.email %}<input type="hidden" name="email" value="{{ current_user.email }}">{% endif %}	
 			<fieldset>
 
 			<!-- Form Name -->
@@ -25,7 +26,7 @@
 			  <input type="hidden" name="method" value="search">
 			  <label class="control-label" for="searchinput">Search the collection</label>
 			  <div class="controls">
-			    <input id="meta" name="meta" type="text" placeholder="chairs" class="input-xlarge search-query" required="">
+			    <input id="data" name="data" type="text" placeholder="chairs" class="input-xlarge search-query" required="">
     
 			  </div>
 			</div>
@@ -56,8 +57,9 @@
         </div>
 		
         <div id="random" class="tab-pane fade">
-			<form class="form-horizontal" action="/email/" method="post">
+			<form class="form-horizontal" action="/{% if current_user.email %}random{% else %}email{% endif %}/" method="post">
 			<input type="hidden" name="method" value="random">
+			{% if current_user.email %}<input type="hidden" name="email" value="{{ current_user.email }}">{% endif %}
 			<fieldset>
 
 			<!-- Form Name -->
@@ -67,7 +69,7 @@
 			<div class="control-group">
 			  <label class="control-label" for="numobjects">Number of objects</label>
 			  <div class="controls">
-			    <select id="meta" name="meta" class="input-mini">
+			    <select id="data" name="data" class="input-mini">
 			      <option>1</option>
 			      <option>2</option>
 			      <option>3</option>
@@ -107,9 +109,9 @@
 		
 		
         <div id="upload" class="tab-pane fade">
-		   	<form class="form-horizontal" action="/email/" method="POST">
+		   	<form class="form-horizontal" action="/{% if current_user.email %}list{% else %}email{% endif %}/" method="POST">
 		   	<input type="hidden" name="method" value="list">
-		
+			{% if current_user.email %}<input type="hidden" name="email" value="{{ current_user.email }}">{% endif %}
 		   	<fieldset>
 
 		   	<!-- Form Name -->
@@ -119,7 +121,7 @@
 		   	<div class="control-group">
 		   	  <label class="control-label" for="accession">Paste in accession numbers</label>
 		   	  <div class="controls">                     
-		   	    <textarea id="meta" name="meta" rows="10" class="field span4"></textarea>
+		   	    <textarea id="data" name="data" rows="10" class="field span4"></textarea>
 		   	  </div>
 		   	</div>
 
