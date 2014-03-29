@@ -9,7 +9,38 @@ import datetime
 import sendgrid
 import dropbox
 
+import re
+
+from mongoengine import *
+
 import urllib2 as urllib			
+
+MONGO_URL = os.environ.get("MONGOHQ_URL")
+
+if MONGO_URL:
+    credentials = re.sub(r"(.*?)//(.*?)(@hatch)", r"\2",MONGO_URL)
+    username = credentials.split(":")[0]
+    password = credentials.split(":")[1]
+    connect(
+        MONGO_URL.split("/")[-1],
+        host=MONGO_URL,
+        port=1043,
+        username=username,
+        password=password
+    )
+else:
+    database = os.environ['DB_NAME']
+    host = os.environ['DB_HOST']
+    connect(
+        database,
+        host=host,
+        port=27017
+    )
+    
+class Log(Document):
+    method = StringField(max_length=300)
+    completed_at = DateTimeField(default=datetime.datetime.now, required=True)
+    data = DynamicField()
 
 
 access_token = os.environ['CH_API_KEY']
@@ -71,6 +102,13 @@ def search_objects(data):
     to_email = data['email'].encode('utf8')
     send_email(to_email, dropbox_link)
     
+    data = {}
+    data['dropbox_link'] = dropbox_link
+    data['dropbox_folder'] = st
+    data['email'] = to_email
+    
+    job = Log(method='search_objects', data=data).save()
+    
     success = "You just uploaded " + st + " to dropbox and emailed " + to_email + " about it."
     
     return success    
@@ -107,6 +145,13 @@ def random_objects(data):
          
     to_email = data['email'].encode('utf8')
     send_email(to_email, dropbox_link)
+    
+    data = {}
+    data['dropbox_link'] = dropbox_link
+    data['dropbox_folder'] = st
+    data['email'] = to_email
+    
+    job = Log(method='random_objects', data=data).save()
     
     success = "You just uploaded " + st + " to dropbox and emailed " + to_email + " about it."
             
@@ -149,6 +194,13 @@ def list_objects(data):
          
     to_email = data['email'].encode('utf8')
     send_email(to_email, dropbox_link)
+    
+    data = {}
+    data['dropbox_link'] = dropbox_link
+    data['dropbox_folder'] = st
+    data['email'] = to_email
+    
+    job = Log(method='list_objects', data=data).save()
     
     success = "You just uploaded " + st + " to dropbox and emailed " + to_email + " about it."
     
