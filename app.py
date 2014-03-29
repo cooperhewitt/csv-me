@@ -48,6 +48,8 @@ else:
 
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
+app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
+app.config['SECURITY_PASSWORD_SALT'] = os.environ['SALT']
 
 db = MongoEngine(app)
 
@@ -159,12 +161,15 @@ def list():
 
 
 @app.route('/test/', methods=['GET', 'POST'])
+@login_required
 def test():
     api = cooperhewitt.api.client.OAuth2(access_token, hostname=hostname)
-    method = 'millerfox.objectPackages.getList'
-      
-    #rsp = api.call(method)
-    return render_template('test.html', rsp='')
+    method = 'millerfox.objects.getInfo'
+    args = { 'accession_number': '7.2013.5' }  
+    
+    rsp = api.call(method, **args)
+    
+    return render_template('test.html', rsp=json.dumps(rsp, indent=4,))
     
     
     
